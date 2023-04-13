@@ -1,5 +1,5 @@
 {
-  "name": "tauri-pinia",
+  "name": "@bitsy-ai/tauri-pinia",
   "version": "2.0.0-rc0",
   "description": "Utility to make pinia stores persisted for tauri apps",
   "main": "build/main/index.js",
