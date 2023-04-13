@@ -52,8 +52,8 @@ export async function tauriPinia(options?: ConfigTauriPinia) {
   const load = async (init: any) => {
     try {
       if (_options.singleFile === false) {
-        await createDir('stores', { recursive: true, dir: BaseDirectory.App });
-        const files = await readDir('stores', { dir: BaseDirectory.App });
+        await createDir('stores', { recursive: true, dir: BaseDirectory.AppData });
+        const files = await readDir('stores', { dir: BaseDirectory.AppData });
         const contents = await Promise.all(
           files
             .filter((file) => file.name?.endsWith('.json'))
@@ -78,10 +78,10 @@ export async function tauriPinia(options?: ConfigTauriPinia) {
         console.log('Loaded store', { ...store }, { ...init });
         return store;
       } else {
-        await createDir('.', { recursive: true, dir: BaseDirectory.App });
+        await createDir('.', { recursive: true, dir: BaseDirectory.AppData });
         const store = JSON.parse(
           await readTextFile(_options.filename || DEFAULT_SINGLEFILE_NAME, {
-            dir: BaseDirectory.App,
+            dir: BaseDirectory.AppData,
           }),
           reviver
         );
@@ -104,7 +104,7 @@ export async function tauriPinia(options?: ConfigTauriPinia) {
             contents: JSON.stringify(store, replacer, 2),
             path: `stores/${getFilename(storeId, _options.storeFilename)}`,
           },
-          { dir: BaseDirectory.App }
+          { dir: BaseDirectory.AppData }
         );
       } else {
         console.log('Saving whole pinia', fullStore);
@@ -113,7 +113,7 @@ export async function tauriPinia(options?: ConfigTauriPinia) {
             contents: JSON.stringify(fullStore, replacer, 2),
             path: _options.filename || DEFAULT_SINGLEFILE_NAME,
           },
-          { dir: BaseDirectory.App }
+          { dir: BaseDirectory.AppData }
         );
       }
     } catch (err) {
