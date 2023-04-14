@@ -1,6 +1,7 @@
 import {
   BaseDirectory,
   createDir,
+  exists,
   readDir,
   readTextFile,
   writeFile,
@@ -51,9 +52,20 @@ export async function tauriPinia(options?: ConfigTauriPinia) {
 
   const load = async (init: any) => {
     try {
+      const storeExists = await exists('stores', {
+        dir: BaseDirectory.AppData,
+      });
+      if (!storeExists) {
+        console.debug('Attempting to create pinia stores dir');
+        await createDir('stores', {
+          recursive: true,
+          dir: BaseDirectory.AppData,
+        });
+        console.debug('Success! Created $APPDATA/stores directory');
+      }
       if (_options.singleFile === false) {
-        await createDir('stores', { recursive: true, dir: BaseDirectory.AppData });
         const files = await readDir('stores', { dir: BaseDirectory.AppData });
+        console.log('Loading pinia store from $APPDATA/stores/ files:', files);
         const contents = await Promise.all(
           files
             .filter((file) => file.name?.endsWith('.json'))
@@ -78,7 +90,6 @@ export async function tauriPinia(options?: ConfigTauriPinia) {
         console.log('Loaded store', { ...store }, { ...init });
         return store;
       } else {
-        await createDir('.', { recursive: true, dir: BaseDirectory.AppData });
         const store = JSON.parse(
           await readTextFile(_options.filename || DEFAULT_SINGLEFILE_NAME, {
             dir: BaseDirectory.AppData,
